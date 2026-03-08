@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ממוצע, חציון ושכיח | אורט בית הערבה</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:          #f0fdfc;
+      --bg-dark:     #0a2320;
+      --teal-dark:   #0f3d38;
+      --teal:        #0d9488;
+      --teal-mid:    #14b8a6;
+      --teal-light:  #5eead4;
+      --teal-xlight: #ccfbf1;
+      --cyan:        #06b6d4;
+      --green:       #10b981;
+      --green-light: #d1fae5;
+      --sky:         #0ea5e9;
+      --white:       #ffffff;
+      --text:        #0f2622;
+      --text-mid:    #1e4d45;
+      --text-muted:  #5b847e;
+      --accent:      #f59e0b;
+      --shadow-sm:   0 2px 12px rgba(13,148,136,.08);
+      --shadow-md:   0 6px 28px rgba(13,148,136,.14);
+      --shadow-lg:   0 16px 56px rgba(13,148,136,.20);
+      --hdr-h:       84px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Heebo', 'Arial Hebrew', sans-serif;
+      background: var(--bg-dark);
+      height: 100vh; overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    #hdr {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(10,35,32,.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(94,234,212,.12);
+    }
+    .hdr-top {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 24px;
+      border-bottom: 1px solid rgba(94,234,212,.07);
+    }
+    .hdr-topic { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; color: rgba(255,255,255,.5); text-transform: uppercase; }
+    .hdr-school { font-size: 11px; color: rgba(255,255,255,.3); letter-spacing: 1px; }
+
+    .tab-nav {
+      display: flex; align-items: stretch;
+    }
+    .tab-btn {
+      flex: 1; padding: 13px 6px;
+      background: transparent; border: none;
+      color: rgba(255,255,255,.4);
+      font-family: 'Heebo', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; border-bottom: 2px solid transparent;
+      transition: all .2s; letter-spacing: .2px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .tab-btn:hover { color: var(--teal-light); background: rgba(94,234,212,.04); }
+    .tab-btn.active { color: var(--teal-light); border-bottom-color: var(--teal-mid); }
+    .tab-btn svg { width: 15px; height: 15px; opacity: .7; }
+    .tab-btn.active svg { opacity: 1; }
+
+    /* ══════════════════════════════════════
+       MAIN AREA
+    ══════════════════════════════════════ */
+    #main {
+      position: fixed;
+      top: var(--hdr-h); left: 0; right: 0; bottom: 0;
+    }
+
+    .tab-content { display: none; width: 100%; height: 100%; }
+    .tab-content.active { display: block; }
+    #tc-slides.active { display: flex; flex-direction: column; }
+
+    /* ══════════════════════════════════════
+       TAB 1 – SLIDES
+    ══════════════════════════════════════ */
+    #tc-slides { background: var(--bg-dark); }
+
+    .slide-deck {
+      flex: 1; position: relative; overflow: hidden;
+    }
+    #sprogress {
+      position: absolute; top: 0; right: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(to left, var(--teal-light), var(--cyan));
+      transition: width .45s ease; z-index: 10; width: 0%;
+    }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      opacity: 0; transition: opacity .4s ease;
+      pointer-events: none; overflow: hidden;
+    }
+    .slide.active { opacity: 1; pointer-events: all; }
+
+    #snav {
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+      padding: 10px 20px;
+      background: rgba(10,35,32,.9);
+      border-top: 1px solid rgba(94,234,212,.1);
+      flex-shrink: 0;
+    }
+    .snav-btn {
+      background: transparent;
+      border: 1.5px solid rgba(94,234,212,.35);
+      color: var(--teal-light);
+      width: 38px; height: 38px; border-radius: 50%;
+      cursor: pointer; font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .snav-btn:hover { background: rgba(94,234,212,.12); }
+    .snav-btn:disabled { opacity: .3; cursor: default; }
+    #scounter { color: rgba(255,255,255,.6); font-size: 12px; font-weight: 600; min-width: 48px; text-align: center; letter-spacing: 1px; }
+
+    /* SLIDE 1 – TITLE */
+    #s1 { background: linear-gradient(135deg, #0a2320 0%, #0d3b35 45%, #0a4744 100%); }
+    .s1-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .s1-bg::before {
+      content: ''; position: absolute;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(20,184,166,.18) 0%, transparent 70%);
+      top: -160px; left: -120px; animation: breathe 6s ease-in-out infinite;
+    }
+    .s1-bg::after {
+      content: ''; position: absolute;
+      width: 420px; height: 420px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(6,182,212,.14) 0%, transparent 70%);
+      bottom: -80px; right: 8%; animation: breathe 9s ease-in-out infinite reverse;
+    }
+    @keyframes breathe { 0%,100%{transform:scale(1);opacity:.8} 50%{transform:scale(1.08);opacity:1} }
+
+    .s1-content { position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px; }
+    .math-badge { width:68px;height:68px;background:rgba(20,184,166,.14);border:1px solid rgba(20,184,166,.28);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--teal-light);font-family:'Rubik',sans-serif;font-weight:700; }
+    .s1-tag { font-size:11px;font-weight:700;letter-spacing:3px;color:var(--teal-light);text-transform:uppercase;padding:5px 16px;border:1px solid rgba(94,234,212,.3);border-radius:20px; }
+    .s1-title { font-family:'Rubik',sans-serif;font-size:clamp(46px,7vw,80px);font-weight:900;line-height:1;color:var(--white); }
+    .s1-title span { background:linear-gradient(90deg,var(--teal-mid),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .s1-subtitle { font-size:19px;font-weight:400;color:rgba(255,255,255,.5); }
+    .s1-divider { width:80px;height:2px;background:linear-gradient(to left,var(--teal-mid),var(--cyan));border-radius:2px; }
+    .s1-school { font-size:13px;color:rgba(255,255,255,.3);letter-spacing:1px; }
+
+    /* SHARED LIGHT SLIDES */
+    .slide-light { background: var(--bg); }
+    .main-card { background:var(--white);border-radius:22px;box-shadow:var(--shadow-lg);padding:40px 48px;max-width:780px;width:90%;position:relative;overflow:hidden; }
+    .main-card::before { content:'';position:absolute;top:0;right:0;left:0;height:4px;background:linear-gradient(to left,var(--teal-mid),var(--cyan)); }
+    .card-label { font-size:10px;font-weight:700;letter-spacing:3px;color:var(--teal-mid);text-transform:uppercase;margin-bottom:8px; }
+    .card-title { font-family:'Rubik',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:900;color:var(--text);line-height:1;margin-bottom:8px; }
+    .card-title .tc { background:linear-gradient(90deg,var(--teal),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .card-def { font-size:17px;color:var(--text-mid);line-height:1.65;margin-bottom:18px;padding-right:14px;border-right:3px solid var(--teal-light); }
+    .formula-box { background:linear-gradient(135deg,#e4fffe,#f0fdfc);border:1.5px solid var(--teal-light);border-radius:12px;padding:16px 22px;text-align:center;margin:16px 0;direction:ltr; }
+    .formula-main { font-family:'Rubik',sans-serif;font-size:19px;font-weight:700;color:var(--teal-dark); }
+    .formula-note { font-size:12px;color:var(--text-muted);margin-top:5px; }
+    .steps { display:flex;flex-direction:column;gap:10px;margin-top:14px; }
+    .step { display:flex;align-items:center;gap:12px;padding:12px 16px;background:#f7fffe;border-radius:11px;border-right:3px solid var(--teal-mid); }
+    .step-num { width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--teal-mid),var(--cyan));color:white;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .step-text { font-size:16px;color:var(--text-mid);line-height:1.4; }
+    .step-text strong { color:var(--teal-dark); }
+    .answer-box { background:linear-gradient(135deg,var(--teal-mid),var(--cyan));border-radius:14px;padding:16px 22px;text-align:center;margin-top:16px;color:white; }
+    .answer-label { font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:4px; }
+    .answer-value { font-family:'Rubik',sans-serif;font-size:24px;font-weight:800; }
+    .bubbles-row { display:flex;align-items:center;gap:7px;justify-content:center;direction:ltr;margin:14px 0; }
+    .bubble { width:44px;height:44px;border-radius:50%;border:2px solid var(--teal-light);background:#f0fdfc;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--text-mid); }
+    .bubble.hi { background:linear-gradient(135deg,var(--teal-mid),var(--cyan));border-color:var(--teal-mid);color:white;width:52px;height:52px;font-size:17px;box-shadow:0 4px 14px rgba(20,184,166,.35); }
+    .bubble-arrow { color:var(--text-muted);font-size:12px; }
+    .callout { display:flex;align-items:flex-start;gap:10px;padding:12px 16px;background:#fef9c3;border-radius:11px;border-right:3px solid var(--accent);margin-top:14px; }
+    .callout-icon { font-size:18px;flex-shrink:0; }
+    .callout-text { font-size:14px;color:#713f12;line-height:1.5; }
+
+    /* Q SLIDES */
+    .q-slide { background:linear-gradient(150deg,#fffbeb,#fef3c7); }
+    .q-card { background:var(--white);border-radius:22px;box-shadow:var(--shadow-lg);padding:40px 48px;max-width:720px;width:90%;position:relative;overflow:hidden; }
+    .q-card::before { content:'';position:absolute;top:0;right:0;left:0;height:4px;background:linear-gradient(to left,var(--accent),#f97316); }
+    .q-label { font-size:10px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:10px; }
+    .q-text { font-family:'Rubik',sans-serif;font-size:clamp(16px,2.5vw,21px);font-weight:700;color:var(--text);line-height:1.45;margin-bottom:22px; }
+    .q-numbers { display:flex;gap:9px;justify-content:center;direction:ltr;margin-bottom:20px; }
+    .q-num { padding:7px 16px;background:linear-gradient(135deg,#e4fffe,#f0fdfc);border:1.5px solid var(--teal-light);border-radius:9px;font-weight:800;font-size:17px;color:var(--teal-dark);font-family:'Rubik',sans-serif; }
+    .options { display:flex;flex-direction:column;gap:9px; }
+    .opt-btn { display:flex;align-items:center;gap:12px;padding:12px 18px;background:#f7fffe;border:1.5px solid #d1fae5;border-radius:12px;cursor:pointer;text-align:right;font-family:'Heebo',sans-serif;font-size:16px;color:var(--text-mid);transition:all .2s;width:100%; }
+    .opt-btn:hover { background:#e0fef8;border-color:var(--teal-light);transform:translateX(-3px); }
+    .opt-btn.correct { background:#d1fae5;border-color:var(--green);color:#065f46;pointer-events:none; }
+    .opt-btn.wrong   { background:#fee2e2;border-color:#f87171;color:#991b1b;pointer-events:none; }
+    .opt-letter { width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--teal-mid),var(--cyan));color:white;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .opt-btn.correct .opt-letter { background:var(--green); }
+    .opt-btn.wrong   .opt-letter { background:#ef4444; }
+    .q-feedback { display:none;margin-top:14px;padding:12px 16px;border-radius:11px;font-size:15px;font-weight:600;text-align:center; }
+    .q-feedback.show { display:block; }
+    .q-feedback.ok  { background:#d1fae5;color:#065f46; }
+    .q-feedback.err { background:#fee2e2;color:#991b1b; }
+
+    /* COMPARISON SLIDE */
+    .comp-wrap { max-width:800px;width:92%; }
+    .comp-title { font-family:'Rubik',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:800;color:var(--text);margin-bottom:20px;text-align:center; }
+    .comp-table { width:100%;border-collapse:collapse; }
+    .comp-table th { background:linear-gradient(135deg,var(--teal-mid),var(--cyan));color:white;padding:12px 16px;font-size:14px;font-weight:700;text-align:right; }
+    .comp-table th:first-child { border-radius:0 11px 0 0; }
+    .comp-table th:last-child  { border-radius:11px 0 0 0; }
+    .comp-table td { padding:12px 16px;font-size:14px;color:var(--text-mid);border-bottom:1px solid #e6fffb;line-height:1.4;vertical-align:middle; }
+    .comp-table tr:last-child td { border-bottom:none; }
+    .comp-table tr:nth-child(odd) td { background:#f8fffe; }
+    .badge { display:inline-block;padding:4px 12px;border-radius:20px;font-weight:800;font-size:14px; }
+    .b-mean   { background:var(--teal-xlight);color:var(--teal-dark); }
+    .b-median { background:#cffafe;color:#0e7490; }
+    .b-mode   { background:var(--green-light);color:#065f46; }
+    .b-range  { background:#fef9c3;color:#713f12; }
+
+    /* PRACTICE SLIDE */
+    .practice-wrap { max-width:760px;width:92%;display:flex;flex-direction:column;gap:14px; }
+    .p-header { background:var(--white);border-radius:18px;padding:22px 32px;box-shadow:var(--shadow-md);border-right:4px solid var(--teal-mid); }
+    .p-label { font-size:10px;font-weight:700;letter-spacing:3px;color:var(--teal-mid);text-transform:uppercase;margin-bottom:7px; }
+    .score-grid { display:flex;gap:8px;flex-wrap:wrap;direction:ltr;justify-content:center;margin-top:12px; }
+    .score-tile { width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,#e4fffe,#f0fdfc);border:1.5px solid var(--teal-light);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;color:var(--teal-dark);font-family:'Rubik',sans-serif; }
+    .reveal-row { display:flex;gap:10px;flex-wrap:wrap;justify-content:center; }
+    .rev-btn { padding:10px 20px;background:transparent;border:1.5px solid var(--teal-mid);border-radius:28px;color:var(--teal-dark);font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s; }
+    .rev-btn:hover { background:var(--teal-mid);color:white; }
+    .rev-btn:disabled { opacity:.4;cursor:default; }
+    .rev-answer { display:none;padding:14px 22px;background:linear-gradient(135deg,var(--teal-mid),var(--cyan));border-radius:12px;color:white;font-size:16px;font-weight:700;text-align:center;line-height:1.5; }
+    .rev-answer.show { display:block; }
+
+    /* SUMMARY SLIDE */
+    #s13 { background:linear-gradient(135deg,#0a2320 0%,#0d3b35 45%,#0a4744 100%); }
+    .sum-content { position:relative;z-index:2;text-align:center;max-width:820px;width:92%; }
+    .sum-title { font-family:'Rubik',sans-serif;font-size:clamp(24px,3.5vw,38px);font-weight:800;color:white;margin-bottom:24px; }
+    .sum-title span { background:linear-gradient(90deg,var(--teal-mid),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .key-row { display:flex;gap:12px;margin-bottom:20px; }
+    .key-card { flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(94,234,212,.2);border-radius:14px;padding:18px 12px; }
+    .kc-symbol { font-family:'Rubik',sans-serif;font-size:24px;font-weight:900;color:var(--teal-light);margin-bottom:6px; }
+    .kc-name { font-size:15px;font-weight:700;color:white;margin-bottom:5px; }
+    .kc-def { font-size:12px;color:rgba(255,255,255,.55);line-height:1.5; }
+    .exit-q { background:rgba(20,184,166,.12);border:1px solid rgba(94,234,212,.25);border-radius:14px;padding:20px 24px; }
+    .eq-label { font-size:10px;font-weight:700;letter-spacing:2px;color:var(--teal-light);text-transform:uppercase;margin-bottom:7px; }
+    .eq-text { font-size:17px;color:rgba(255,255,255,.85);line-height:1.5; }
+
+    /* RANGE VISUAL */
+    .range-visual { display:flex;align-items:center;direction:ltr;margin:16px 0;justify-content:center; }
+    .rv-cap { width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;font-family:'Rubik',sans-serif;color:white;flex-shrink:0; }
+    .rv-cap.lo { background:linear-gradient(135deg,var(--teal-mid),var(--teal)); }
+    .rv-cap.hi { background:linear-gradient(135deg,var(--cyan),var(--sky)); }
+    .rv-line { flex:1;height:4px;background:linear-gradient(to left,var(--cyan),var(--teal-mid));position:relative;min-width:150px;margin:0 4px; }
+    .rv-line::after { content:'טווח';position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:700;color:var(--teal-mid); }
+
+    /* OPENING SLIDE */
+    #s2 { background:linear-gradient(150deg,#f0fdfc,#e2faf8,#d0f9f4); }
+    .opening-wrap { display:flex;flex-direction:column;align-items:center;gap:22px;max-width:840px;width:92%; }
+    .opening-hero { background:var(--white);border-radius:18px;padding:24px 36px;box-shadow:var(--shadow-md);width:100%;border-top:4px solid var(--teal-mid);text-align:center; }
+    .opening-hero h2 { font-family:'Rubik',sans-serif;font-size:clamp(18px,3vw,26px);font-weight:800;color:var(--text);margin-bottom:8px; }
+    .opening-hero p { font-size:16px;color:var(--text-muted);line-height:1.6; }
+    .concept-trio { display:flex;gap:14px;width:100%; }
+    .trio-card { flex:1;background:var(--white);border-radius:16px;padding:20px 14px;text-align:center;box-shadow:var(--shadow-sm);border-bottom:4px solid var(--teal-mid);transition:transform .2s; }
+    .trio-card:nth-child(2){border-bottom-color:var(--cyan);}
+    .trio-card:nth-child(3){border-bottom-color:var(--green);}
+    .trio-icon { width:44px;height:44px;border-radius:12px;background:var(--teal-xlight);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;color:var(--teal-dark);font-family:'Rubik',sans-serif;font-weight:900; }
+    .trio-card:nth-child(2) .trio-icon{background:#cffafe;color:#0e7490;}
+    .trio-card:nth-child(3) .trio-icon{background:var(--green-light);color:#065f46;}
+    .trio-name { font-family:'Rubik',sans-serif;font-size:18px;font-weight:800;color:var(--text);margin-bottom:5px; }
+    .trio-desc { font-size:12px;color:var(--text-muted);line-height:1.5; }
+
+    /* ══════════════════════════════════════
+       TAB 2 – GAMES
+    ══════════════════════════════════════ */
+    #tc-games { background:var(--bg);overflow-y:auto;padding:28px 20px 80px; }
+
+    .games-layout { max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:24px; }
+
+    .game-section { background:var(--white);border-radius:22px;box-shadow:var(--shadow-md);overflow:hidden; }
+    .game-header {
+      display:flex;align-items:center;gap:12px;
+      padding:18px 26px;
+      background:linear-gradient(135deg,var(--bg-dark),var(--teal-dark));
+      border-bottom:1px solid rgba(94,234,212,.1);
+    }
+    .game-icon { width:40px;height:40px;border-radius:12px;background:rgba(94,234,212,.12);border:1px solid rgba(94,234,212,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0; }
+    .game-title { font-family:'Rubik',sans-serif;font-size:17px;font-weight:800;color:var(--teal-light); }
+    .game-sub   { font-size:12px;color:rgba(255,255,255,.4);margin-top:2px; }
+    .game-body  { padding:24px 26px; }
+
+    /* QUIZ */
+    .quiz-meta { display:flex;justify-content:space-between;align-items:center;margin-bottom:16px; }
+    .quiz-progress-bar { flex:1;height:6px;background:#e5f7f5;border-radius:10px;overflow:hidden;margin-left:16px; }
+    .quiz-progress-fill { height:100%;background:linear-gradient(to left,var(--teal-mid),var(--cyan));border-radius:10px;transition:width .4s ease;width:0%; }
+    .quiz-score-badge { font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;color:var(--teal-dark);background:var(--teal-xlight);padding:4px 12px;border-radius:20px;flex-shrink:0; }
+    .quiz-q { font-size:17px;font-weight:700;color:var(--text);margin-bottom:16px;line-height:1.45; }
+    .quiz-options { display:flex;flex-direction:column;gap:9px; }
+    .quiz-opt { display:flex;align-items:center;gap:12px;padding:12px 16px;background:#f7fffe;border:1.5px solid #d1fae5;border-radius:11px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:15px;color:var(--text-mid);transition:all .2s;width:100%;text-align:right; }
+    .quiz-opt:hover { background:#e0fef8;border-color:var(--teal-light);transform:translateX(-2px); }
+    .quiz-opt.correct { background:#d1fae5;border-color:var(--green);color:#065f46;pointer-events:none; }
+    .quiz-opt.wrong   { background:#fee2e2;border-color:#f87171;color:#991b1b;pointer-events:none; }
+    .quiz-opt.show-ans{ background:#d1fae5;border-color:var(--green);color:#065f46;pointer-events:none; }
+    .quiz-ol { width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--teal-mid),var(--cyan));color:white;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .quiz-opt.correct .quiz-ol,.quiz-opt.show-ans .quiz-ol{background:var(--green);}
+    .quiz-opt.wrong   .quiz-ol{background:#ef4444;}
+    .quiz-next { display:none;margin-top:16px;padding:10px 28px;background:linear-gradient(135deg,var(--teal-mid),var(--cyan));border:none;border-radius:28px;color:white;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s; }
+    .quiz-next:hover { opacity:.9;transform:translateX(-2px); }
+    .quiz-next.show { display:inline-flex; }
+    .quiz-done { display:none;text-align:center;padding:20px 0; }
+    .quiz-done.show { display:block; }
+    .quiz-done .qd-score { font-family:'Rubik',sans-serif;font-size:48px;font-weight:900;color:var(--teal-mid);margin-bottom:8px; }
+    .quiz-done .qd-label { font-size:16px;color:var(--text-muted);margin-bottom:20px; }
+    .quiz-reset { padding:10px 28px;background:var(--white);border:1.5px solid var(--teal-mid);border-radius:28px;color:var(--teal-dark);font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s; }
+    .quiz-reset:hover { background:var(--teal-mid);color:white; }
+    #quiz-area, #quiz-done-area { }
+
+    /* MATCHING GAME */
+    .match-layout { display:flex;gap:16px;align-items:flex-start; }
+    .match-col { display:flex;flex-direction:column;gap:10px;flex:1; }
+    .match-col-label { font-size:11px;font-weight:700;letter-spacing:2px;color:var(--teal-mid);text-transform:uppercase;margin-bottom:4px;text-align:center; }
+    .match-con {
+      padding:14px 18px;background:#f7fffe;border:1.5px solid #d1fae5;
+      border-radius:12px;cursor:pointer;font-family:'Rubik',sans-serif;
+      font-size:16px;font-weight:800;color:var(--text);text-align:center;
+      transition:all .2s;
+    }
+    .match-con:hover:not(.locked):not(.selected) { background:#e0fef8;border-color:var(--teal-light); }
+    .match-con.selected { background:#e0fef8;border-color:var(--teal-mid);box-shadow:0 0 0 2px rgba(20,184,166,.25); }
+    .match-con.locked   { background:var(--green-light);border-color:var(--green);color:#065f46;cursor:default; }
+    .match-con.wrong-flash { animation:shake .4s ease; }
+    .match-def {
+      padding:14px 18px;background:#f7fffe;border:1.5px solid #d1fae5;
+      border-radius:12px;cursor:pointer;font-size:14px;color:var(--text-mid);
+      text-align:center;line-height:1.4;transition:all .2s;min-height:56px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .match-def:hover:not(.locked) { background:#e0fef8;border-color:var(--teal-light); }
+    .match-def.locked   { background:var(--green-light);border-color:var(--green);color:#065f46;cursor:default; }
+    .match-def.wrong-flash { animation:shake .4s ease; }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+    }
+    .match-status { text-align:center;margin-top:16px;font-size:15px;font-weight:700;min-height:24px;color:var(--teal-dark); }
+    .match-reset { display:none;padding:9px 24px;background:transparent;border:1.5px solid var(--teal-mid);border-radius:24px;color:var(--teal-dark);font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:12px;transition:all .2s; }
+    .match-reset:hover { background:var(--teal-mid);color:white; }
+    .match-reset.show { display:inline-flex; }
+    .match-celebrate { display:none;text-align:center;margin-top:8px;padding:14px;background:linear-gradient(135deg,var(--teal-mid),var(--cyan));border-radius:14px;color:white;font-size:16px;font-weight:700; }
+    .match-celebrate.show { display:block; }
+
+    /* FLASH CARDS */
+    .flash-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
+    .flash-card {
+      perspective: 800px;
+      height: 130px;
+      cursor: pointer;
+    }
+    .flash-inner {
+      width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.4,0,.2,1);
+      position: relative;
+    }
+    .flash-card.flipped .flash-inner { transform: rotateY(180deg); }
+    .flash-front, .flash-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 14px;
+    }
+    .flash-front {
+      background: linear-gradient(135deg, var(--bg-dark), var(--teal-dark));
+      border: 1px solid rgba(94,234,212,.2);
+    }
+    .flash-front .ff-text {
+      font-family: 'Rubik', sans-serif;
+      font-size: 22px; font-weight: 900;
+      color: var(--teal-light); text-align: center; line-height: 1.3;
+    }
+    .flash-front .ff-hint { font-size:11px;color:rgba(255,255,255,.35);margin-top:5px; }
+    .flash-back {
+      background: linear-gradient(135deg, var(--teal-mid), var(--cyan));
+      transform: rotateY(-180deg);
+    }
+    .flash-back .fb-text {
+      font-size: 15px; font-weight: 700;
+      color: white; text-align: center; line-height: 1.4;
+    }
+    .flash-hint-bar { text-align:center;margin-bottom:14px;font-size:13px;color:var(--text-muted); }
+    .flash-flip-all { padding:8px 22px;background:transparent;border:1.5px solid var(--teal-mid);border-radius:22px;color:var(--teal-dark);font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:14px; }
+    .flash-flip-all:hover { background:var(--teal-mid);color:white; }
+
+    /* ══════════════════════════════════════
+       TAB 3 – GROUP ACTIVITY
+    ══════════════════════════════════════ */
+    #tc-group { background:var(--bg);overflow-y:auto;padding:28px 20px 80px; }
+    .group-layout { max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:20px; }
+
+    .group-intro {
+      background: linear-gradient(135deg,var(--bg-dark),var(--teal-dark));
+      border-radius:20px;padding:28px 32px;
+      border:1px solid rgba(94,234,212,.12);
+    }
+    .group-intro h2 { font-family:'Rubik',sans-serif;font-size:clamp(18px,3vw,26px);font-weight:800;color:var(--teal-light);margin-bottom:8px; }
+    .group-intro p  { font-size:15px;color:rgba(255,255,255,.65);line-height:1.65; }
+    .group-steps-row { display:flex;gap:12px;margin-top:16px; }
+    .gs { flex:1;background:rgba(94,234,212,.08);border:1px solid rgba(94,234,212,.15);border-radius:12px;padding:12px 14px;text-align:center; }
+    .gs-num { font-family:'Rubik',sans-serif;font-size:22px;font-weight:900;color:var(--teal-light); }
+    .gs-label { font-size:12px;color:rgba(255,255,255,.5);margin-top:3px; }
+
+    .group-cards { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+    .group-card {
+      background:var(--white);border-radius:18px;
+      box-shadow:var(--shadow-sm);overflow:hidden;
+    }
+    .gc-header {
+      padding:16px 20px;
+      display:flex;align-items:center;gap:12px;
+    }
+    .gc-num { width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rubik',sans-serif;font-size:16px;font-weight:900;color:white;flex-shrink:0; }
+    .gc-title { font-family:'Rubik',sans-serif;font-size:17px;font-weight:800;color:var(--text); }
+    .gc-concept { font-size:12px;color:var(--text-muted);margin-top:1px; }
+    .gc-body { padding:0 20px 18px; }
+    .gc-task { font-size:14px;color:var(--text-mid);line-height:1.7;margin-bottom:12px; }
+    .gc-tags { display:flex;flex-wrap:wrap;gap:8px; }
+    .gc-tag { padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700; }
+
+    .gc1 .gc-header { background:linear-gradient(135deg,var(--teal-xlight),#e0f7f4); }
+    .gc1 .gc-num   { background:linear-gradient(135deg,var(--teal-mid),var(--teal)); }
+    .gc2 .gc-header { background:linear-gradient(135deg,#cffafe,#e0f9fb); }
+    .gc2 .gc-num   { background:linear-gradient(135deg,var(--cyan),var(--sky)); }
+    .gc3 .gc-header { background:linear-gradient(135deg,var(--green-light),#d6fde8); }
+    .gc3 .gc-num   { background:linear-gradient(135deg,var(--green),#059669); }
+    .gc4 .gc-header { background:linear-gradient(135deg,#fef9c3,#fef3a0); }
+    .gc4 .gc-num   { background:linear-gradient(135deg,var(--accent),#d97706); }
+
+    .group-timer { background:var(--white);border-radius:18px;box-shadow:var(--shadow-sm);padding:20px 26px;display:flex;align-items:center;justify-content:space-between;border-right:4px solid var(--teal-mid); }
+    .gt-label { font-size:14px;color:var(--text-muted); }
+    .gt-time { font-family:'Rubik',sans-serif;font-size:22px;font-weight:900;color:var(--teal-dark); }
+    .gt-btn { padding:10px 22px;background:linear-gradient(135deg,var(--teal-mid),var(--cyan));border:none;border-radius:24px;color:white;font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;min-width:90px; }
+    .gt-btn:hover { opacity:.9; }
+
+    /* ══════════════════════════════════════
+       TAB 4 – SUMMARY ACTIVITY
+    ══════════════════════════════════════ */
+    #tc-summary { background:var(--bg);overflow-y:auto;padding:28px 20px 80px; }
+    .summary-layout { max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:20px; }
+
+    .sum-activity-card {
+      background:var(--white);border-radius:22px;
+      box-shadow:var(--shadow-md);overflow:hidden;
+    }
+    .sac-header {
+      padding:20px 28px;
+      background:linear-gradient(135deg,var(--bg-dark),var(--teal-dark));
+      border-bottom:1px solid rgba(94,234,212,.1);
+      display:flex;align-items:center;gap:12px;
+    }
+    .sac-icon { width:42px;height:42px;border-radius:12px;background:rgba(94,234,212,.12);border:1px solid rgba(94,234,212,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0; }
+    .sac-title { font-family:'Rubik',sans-serif;font-size:17px;font-weight:800;color:var(--teal-light); }
+    .sac-sub   { font-size:12px;color:rgba(255,255,255,.4);margin-top:2px; }
+    .sac-body  { padding:24px 28px; }
+
+    /* EXIT TICKET */
+    .et-numbers { display:flex;gap:10px;flex-wrap:wrap;direction:ltr;justify-content:center;margin:16px 0; }
+    .et-num { width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#e4fffe,#f0fdfc);border:1.5px solid var(--teal-light);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--teal-dark);font-family:'Rubik',sans-serif; }
+    .et-tasks { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px; }
+    .et-task { padding:14px 16px;background:#f7fffe;border-radius:12px;border-right:3px solid var(--teal-mid); }
+    .et-task-label { font-size:11px;font-weight:700;letter-spacing:2px;color:var(--teal-mid);text-transform:uppercase;margin-bottom:4px; }
+    .et-task-q { font-size:15px;color:var(--text-mid);font-weight:600; }
+    .et-reveal-btn { display:block;width:100%;padding:12px;background:linear-gradient(135deg,var(--teal-mid),var(--cyan));border:none;border-radius:12px;color:white;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px; }
+    .et-reveal-btn:hover { opacity:.9; }
+    .et-answers { display:none;margin-top:14px; }
+    .et-answers.show { display:block; }
+    .et-ans-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+    .et-ans { padding:12px 16px;border-radius:12px;text-align:center; }
+    .et-ans .ea-label { font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:3px; }
+    .et-ans .ea-val { font-family:'Rubik',sans-serif;font-size:22px;font-weight:900; }
+    .ea-mean   { background:var(--teal-xlight);color:var(--teal-dark); }
+    .ea-median { background:#cffafe;color:#0e7490; }
+    .ea-mode   { background:var(--green-light);color:#065f46; }
+    .ea-range  { background:#fef9c3;color:#713f12; }
+
+    /* 3-2-1 */
+    .reflect-grid { display:flex;flex-direction:column;gap:14px; }
+    .reflect-row {
+      display:flex;align-items:flex-start;gap:16px;
+      padding:16px 20px;background:#f7fffe;
+      border-radius:14px;border-right:4px solid var(--teal-mid);
+    }
+    .reflect-row:nth-child(2) { border-right-color:var(--cyan); }
+    .reflect-row:nth-child(3) { border-right-color:var(--green); }
+    .reflect-num { font-family:'Rubik',sans-serif;font-size:36px;font-weight:900;color:var(--teal-light);flex-shrink:0;line-height:1; }
+    .reflect-prompt { font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px; }
+    .reflect-input {
+      width:100%;padding:10px 14px;
+      background:var(--white);
+      border:1.5px solid #d1fae5;border-radius:10px;
+      font-family:'Heebo',sans-serif;font-size:14px;color:var(--text-mid);
+      resize:none;outline:none;transition:border-color .2s;
+    }
+    .reflect-input:focus { border-color:var(--teal-mid); }
+
+    /* FINAL CONCEPT CHECK */
+    .concept-checks { display:flex;flex-direction:column;gap:10px; }
+    .cc-item { display:flex;align-items:center;gap:14px;padding:14px 18px;background:#f7fffe;border-radius:12px;border:1.5px solid #d1fae5;cursor:pointer;transition:all .2s; }
+    .cc-item:hover { background:#e0fef8;border-color:var(--teal-light); }
+    .cc-item.checked { background:var(--green-light);border-color:var(--green); }
+    .cc-cb { width:24px;height:24px;border-radius:6px;border:2px solid var(--teal-light);background:white;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s; }
+    .cc-item.checked .cc-cb { background:var(--green);border-color:var(--green);color:white;font-size:14px; }
+    .cc-text { font-size:15px;color:var(--text-mid);font-weight:500; }
+    .cc-item.checked .cc-text { color:#065f46;font-weight:600; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ HEADER ══════ -->
+<header id="hdr">
+  <div class="hdr-top">
+    <span class="hdr-topic">ממוצע · חציון · שכיח</span>
+    <span class="hdr-school">אורט בית הערבה</span>
+  </div>
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('slides',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      מצגת
+    </button>
+    <button class="tab-btn" onclick="switchTab('games',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h4m-2-2v4M15 11h.01M18 11h.01"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg>
+      משחקים לימודיים
+    </button>
+    <button class="tab-btn" onclick="switchTab('group',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      פעילות קבוצתית
+    </button>
+    <button class="tab-btn" onclick="switchTab('summary',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      פעילות סיכום
+    </button>
+  </nav>
+</header>
+
+<div id="main">
+
+  <!-- ═══════════════════════════════════════════
+       TAB 1 — מצגת
+  ══════════════════════════════════════════════ -->
+  <div class="tab-content active" id="tc-slides">
+    <div class="slide-deck">
+      <div id="sprogress"></div>
+
+      <!-- שקף 1: כותרת -->
+      <div class="slide active" id="s1">
+        <div class="s1-bg"></div>
+        <div class="s1-content">
+          <div class="math-badge">Σ</div>
+          <div class="s1-tag">אלגברה | כיתה ח</div>
+          <h1 class="s1-title">ממוצע,&nbsp;<span>חציון</span><br>ושכיח</h1>
+          <p class="s1-subtitle">מה מספרים יכולים לספר לנו?</p>
+          <div class="s1-divider"></div>
+          <p class="s1-school">בית ספר אורט בית הערבה</p>
+        </div>
+      </div>
+
+      <!-- שקף 2: פתיחה -->
+      <div class="slide" id="s2">
+        <div class="opening-wrap">
+          <div class="opening-hero">
+            <h2>קיבלת 5 ציונים השנה.</h2>
+            <p>כיצד תתאר <strong>במספר אחד</strong> את הביצועים שלך?<br>לשם כך קיימים כלים מתמטיים מיוחדים.</p>
+          </div>
+          <div class="concept-trio">
+            <div class="trio-card"><div class="trio-icon">x̄</div><div class="trio-name">ממוצע</div><div class="trio-desc">מפזר את הסכום שווה בשווה</div></div>
+            <div class="trio-card"><div class="trio-icon">|</div><div class="trio-name">חציון</div><div class="trio-desc">הערך שנמצא בדיוק באמצע</div></div>
+            <div class="trio-card"><div class="trio-icon">#</div><div class="trio-name">שכיח</div><div class="trio-desc">הערך שמופיע הכי הרבה</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- שקף 3: ממוצע הגדרה -->
+      <div class="slide slide-light" id="s3">
+        <div class="main-card">
+          <div class="card-label">מושג 1 מתוך 3</div>
+          <div class="card-title"><span class="tc">ממוצע</span></div>
+          <div class="card-def">מחברים את כל הערכים,<br>ומחלקים במספר הערכים.</div>
+          <div class="formula-box">
+            <div class="formula-main">ממוצע = סכום כל הערכים ÷ כמות הערכים</div>
+            <div class="formula-note">לדוגמה: ממוצע של 3 ציונים = (ציון1 + ציון2 + ציון3) ÷ 3</div>
+          </div>
+          <div class="callout"><span class="callout-icon">💡</span><span class="callout-text">הממוצע מייצג מה היה לכל אחד <strong>אם חילקנו שווה בשווה</strong>.</span></div>
+        </div>
+      </div>
+
+      <!-- שקף 4: ממוצע דוגמה -->
+      <div class="slide slide-light" id="s4">
+        <div class="main-card">
+          <div class="card-label">דוגמה – ממוצע</div>
+          <div class="card-title">כיצד מחשבים ממוצע?</div>
+          <p style="font-size:16px;color:var(--text-muted);margin-bottom:14px;">ציוני דניאל: <strong style="color:var(--teal-dark)">70, 80, 90</strong></p>
+          <div class="steps">
+            <div class="step"><div class="step-num">1</div><div class="step-text">מחברים הכול:&nbsp; <strong>70 + 80 + 90 = 240</strong></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-text">מחלקים במספר הציונים (3):&nbsp; <strong>240 ÷ 3 = 80</strong></div></div>
+          </div>
+          <div class="answer-box"><div class="answer-label">תשובה</div><div class="answer-value">הממוצע של דניאל הוא 80</div></div>
+        </div>
+      </div>
+
+      <!-- שקף 5: שאלה ממוצע -->
+      <div class="slide q-slide" id="s5">
+        <div class="q-card">
+          <div class="q-label">בדקו הבנה</div>
+          <div class="q-text">מה הממוצע של ציונים אלה?</div>
+          <div class="q-numbers"><div class="q-num">60</div><div class="q-num">80</div><div class="q-num">100</div></div>
+          <div class="options">
+            <button class="opt-btn" onclick="checkAns(this,false,'s5fb')"><span class="opt-letter">א</span>70</button>
+            <button class="opt-btn" onclick="checkAns(this,true,'s5fb')"><span class="opt-letter">ב</span>80</button>
+            <button class="opt-btn" onclick="checkAns(this,false,'s5fb')"><span class="opt-letter">ג</span>240</button>
+            <button class="opt-btn" onclick="checkAns(this,false,'s5fb')"><span class="opt-letter">ד</span>75</button>
+          </div>
+          <div class="q-feedback" id="s5fb"></div>
+        </div>
+      </div>
+
+      <!-- שקף 6: חציון הגדרה -->
+      <div class="slide slide-light" id="s6">
+        <div class="main-card">
+          <div class="card-label">מושג 2 מתוך 3</div>
+          <div class="card-title"><span class="tc">חציון</span></div>
+          <div class="card-def">הערך שנמצא <strong>באמצע</strong> כשמסדרים<br>את המספרים מקטן לגדול.</div>
+          <div class="steps">
+            <div class="step"><div class="step-num">1</div><div class="step-text"><strong>סדר</strong> את המספרים מקטן לגדול</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-text"><strong>מצא</strong> את המספר האמצעי</div></div>
+          </div>
+          <div class="callout"><span class="callout-icon">💡</span><span class="callout-text">אם יש <strong>מספר זוגי</strong> של ערכים — ממצעים את שני הערכים האמצעיים.</span></div>
+        </div>
+      </div>
+
+      <!-- שקף 7: חציון דוגמה -->
+      <div class="slide slide-light" id="s7">
+        <div class="main-card">
+          <div class="card-label">דוגמה – חציון</div>
+          <div class="card-title">כיצד מוצאים חציון?</div>
+          <p style="font-size:15px;color:var(--text-muted);margin-bottom:5px;"><strong>א׳ — 5 מספרים (אי-זוגי):</strong></p>
+          <div class="bubbles-row"><div class="bubble">3</div><span class="bubble-arrow">›</span><div class="bubble">7</div><span class="bubble-arrow">›</span><div class="bubble hi">9</div><span class="bubble-arrow">›</span><div class="bubble">12</div><span class="bubble-arrow">›</span><div class="bubble">15</div></div>
+          <p style="font-size:15px;color:var(--text-muted);text-align:center;margin-bottom:16px;">המספר ה-3 הוא האמצעי → <strong style="color:var(--teal-dark)">חציון = 9</strong></p>
+          <p style="font-size:15px;color:var(--text-muted);margin-bottom:5px;"><strong>ב׳ — 4 מספרים (זוגי):</strong></p>
+          <div class="bubbles-row"><div class="bubble">4</div><span class="bubble-arrow">›</span><div class="bubble hi">6</div><span class="bubble-arrow">›</span><div class="bubble hi">8</div><span class="bubble-arrow">›</span><div class="bubble">10</div></div>
+          <p style="font-size:15px;color:var(--text-muted);text-align:center;">שני האמצעיים: (6+8)÷2 = <strong style="color:var(--teal-dark)">חציון = 7</strong></p>
+        </div>
+      </div>
+
+      <!-- שקף 8: שאלה חציון -->
+      <div class="slide q-slide" id="s8">
+        <div class="q-card">
+          <div class="q-label">בדקו הבנה</div>
+          <div class="q-text">מה החציון של הסדרה?</div>
+          <div class="q-numbers"><div class="q-num">2</div><div class="q-num">5</div><div class="q-num">7</div><div class="q-num">10</div><div class="q-num">13</div></div>
+          <div class="options">
+            <button class="opt-btn" onclick="checkAns(this,true,'s8fb')"><span class="opt-letter">א</span>7</button>
+            <button class="opt-btn" onclick="checkAns(this,false,'s8fb')"><span class="opt-letter">ב</span>7.4</button>
+            <button class="opt-btn" onclick="checkAns(this,false,'s8fb')"><span class="opt-letter">ג</span>5</button>
+            <button class="opt-btn" onclick="checkAns(this,false,'s8fb')"><span class="opt-letter">ד</span>10</button>
+          </div>
+          <div class="q-feedback" id="s8fb"></div>
+        </div>
+      </div>
+
+      <!-- שקף 9: שכיח -->
+      <div class="slide slide-light" id="s9">
+        <div class="main-card">
+          <div class="card-label">מושג 3 מתוך 3</div>
+          <div class="card-title"><span class="tc">שכיח</span></div>
+          <div class="card-def">הערך שמופיע <strong>הכי הרבה פעמים</strong> בסדרה.</div>
+          <div class="formula-box">
+            <div class="formula-main">5,&nbsp; 3,&nbsp; 7,&nbsp; 3,&nbsp; 8,&nbsp; <span style="color:var(--teal-mid);font-size:1.15em;">3</span></div>
+            <div class="formula-note">המספר 3 מופיע 3 פעמים — הוא השכיח</div>
+          </div>
+          <div class="bubbles-row"><div class="bubble">5</div><div class="bubble hi">3</div><div class="bubble">7</div><div class="bubble hi">3</div><div class="bubble">8</div><div class="bubble hi">3</div></div>
+          <div class="callout"><span class="callout-icon">💡</span><span class="callout-text">לפעמים יש <strong>יותר משכיח אחד</strong> — אם שני ערכים מופיעים אותו מספר פעמים.</span></div>
+        </div>
+      </div>
+
+      <!-- שקף 10: טווח -->
+      <div class="slide slide-light" id="s10">
+        <div class="main-card">
+          <div class="card-label">מושג בונוס</div>
+          <div class="card-title">טווח</div>
+          <div class="card-def">ההפרש בין הערך <strong>הגדול ביותר</strong><br>לבין הערך <strong>הקטן ביותר</strong>.</div>
+          <div class="formula-box"><div class="formula-main">טווח = מקסימום − מינימום</div></div>
+          <p style="font-size:15px;color:var(--text-muted);margin:12px 0 6px;text-align:center;">דוגמה: ציונים 75, 80, 90, 95, 100</p>
+          <div class="range-visual"><div class="rv-cap lo">75</div><div class="rv-line"></div><div class="rv-cap hi">100</div></div>
+          <div class="answer-box"><div class="answer-label">חישוב</div><div class="answer-value">100 − 75 = 25 &nbsp;|&nbsp; הטווח הוא 25</div></div>
+        </div>
+      </div>
+
+      <!-- שקף 11: טבלת השוואה -->
+      <div class="slide" id="s11" style="background:linear-gradient(150deg,#f0fdfc,#e8faf8);">
+        <div class="comp-wrap">
+          <div class="comp-title">כל המושגים — <span style="background:linear-gradient(90deg,var(--teal-mid),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">בטבלה אחת</span></div>
+          <table class="comp-table">
+            <thead><tr><th>מושג</th><th>מה זה מספר לנו?</th><th>איך מחשבים?</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge b-mean">ממוצע</span></td><td>ערך "שווה" לכל אחד</td><td>סכום ÷ כמות</td></tr>
+              <tr><td><span class="badge b-median">חציון</span></td><td>הערך האמצעי בסדרה</td><td>סדר ← מצא אמצע</td></tr>
+              <tr><td><span class="badge b-mode">שכיח</span></td><td>הערך הכי נפוץ</td><td>חפש מי חוזר הכי הרבה</td></tr>
+              <tr><td><span class="badge b-range">טווח</span></td><td>כמה "פרוסה" הסדרה</td><td>מקסימום − מינימום</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- שקף 12: תרגול -->
+      <div class="slide" id="s12" style="background:linear-gradient(150deg,#f0fdfc,#e8faf8);">
+        <div class="practice-wrap">
+          <div class="p-header">
+            <div class="p-label">תרגול מהחוברת</div>
+            <h3 style="font-family:'Rubik',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px;">ציוני חוג האומנות</h3>
+            <p style="font-size:15px;color:var(--text-muted);">חשבו את הטווח, הממוצע והחציון:</p>
+            <div class="score-grid">
+              <div class="score-tile">90</div><div class="score-tile">75</div><div class="score-tile">85</div><div class="score-tile">86</div>
+              <div class="score-tile">100</div><div class="score-tile">100</div><div class="score-tile">90</div><div class="score-tile">75</div>
+            </div>
+          </div>
+          <div class="reveal-row">
+            <button class="rev-btn" onclick="revealAns('r-range',this)">גלה: טווח</button>
+            <button class="rev-btn" onclick="revealAns('r-mean',this)">גלה: ממוצע</button>
+            <button class="rev-btn" onclick="revealAns('r-median',this)">גלה: חציון</button>
+          </div>
+          <div class="rev-answer" id="r-range">טווח = 100 − 75 = <strong>25</strong></div>
+          <div class="rev-answer" id="r-mean">ממוצע = 701 ÷ 8 ≈ <strong>87.6</strong></div>
+          <div class="rev-answer" id="r-median">סדר: 75,75,85,<strong>86,90</strong>,90,100,100 → (86+90)÷2 = <strong>88</strong></div>
+        </div>
+      </div>
+
+      <!-- שקף 13: סיכום -->
+      <div class="slide" id="s13">
+        <div class="s1-bg"></div>
+        <div class="sum-content">
+          <h2 class="sum-title">3 רעיונות <span>מרכזיים</span></h2>
+          <div class="key-row">
+            <div class="key-card"><div class="kc-symbol">x̄</div><div class="kc-name">ממוצע</div><div class="kc-def">סכום כל הערכים<br>חלקי כמותם</div></div>
+            <div class="key-card"><div class="kc-symbol">|</div><div class="kc-name">חציון</div><div class="kc-def">הערך האמצעי<br>בסדרה ממוינת</div></div>
+            <div class="key-card"><div class="kc-symbol">#</div><div class="kc-name">שכיח</div><div class="kc-def">הערך הכי נפוץ<br>בסדרה</div></div>
+          </div>
+          <div class="exit-q">
+            <div class="eq-label">שאלה לחשיבה</div>
+            <div class="eq-text">מתי עדיף להשתמש בחציון ולא בממוצע?<br><span style="font-size:13px;opacity:.7;">חשבו על ציון חריג מאוד — כיצד הוא ישפיע על כל מדד?</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /slide-deck -->
+
+    <div id="snav">
+      <button class="snav-btn" id="sprev" onclick="goSlide(-1)">&#8594;</button>
+      <span id="scounter">1 / 13</span>
+      <button class="snav-btn" id="snext" onclick="goSlide(1)">&#8592;</button>
+    </div>
+  </div><!-- /tc-slides -->
+
+
+  <!-- ═══════════════════════════════════════════
+       TAB 2 — משחקים לימודיים
+  ══════════════════════════════════════════════ -->
+  <div class="tab-content" id="tc-games">
+    <div class="games-layout">
+
+      <!-- GAME 1: חידון מהיר -->
+      <div class="game-section">
+        <div class="game-header">
+          <div class="game-icon">🎯</div>
+          <div><div class="game-title">חידון מהיר</div><div class="game-sub">5 שאלות · ממוצע, חציון ושכיח</div></div>
+        </div>
+        <div class="game-body">
+          <div id="quiz-area">
+            <div class="quiz-meta">
+              <div class="quiz-score-badge" id="qscore">ניקוד: 0 / 5</div>
+              <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="qprog"></div></div>
+            </div>
+            <div class="quiz-q" id="quiz-q"></div>
+            <div class="quiz-options" id="quiz-opts"></div>
+            <button class="quiz-next" id="quiz-next" onclick="nextQuizQ()">שאלה הבאה ←</button>
+          </div>
+          <div class="quiz-done" id="quiz-done-area">
+            <div class="qd-score" id="qd-score-val"></div>
+            <div class="qd-label" id="qd-label"></div>
+            <button class="quiz-reset" onclick="resetQuiz()">נסה שוב</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAME 2: משחק התאמה -->
+      <div class="game-section">
+        <div class="game-header">
+          <div class="game-icon">🔗</div>
+          <div><div class="game-title">משחק התאמה</div><div class="game-sub">חבר כל מושג להגדרה שלו</div></div>
+        </div>
+        <div class="game-body">
+          <div class="match-layout">
+            <div class="match-col" id="match-concepts">
+              <div class="match-col-label">מושגים</div>
+              <div class="match-con" data-idx="0" onclick="clickConcept(this)">ממוצע</div>
+              <div class="match-con" data-idx="1" onclick="clickConcept(this)">חציון</div>
+              <div class="match-con" data-idx="2" onclick="clickConcept(this)">שכיח</div>
+              <div class="match-con" data-idx="3" onclick="clickConcept(this)">טווח</div>
+            </div>
+            <div class="match-col" id="match-defs">
+              <div class="match-col-label">הגדרות</div>
+              <div class="match-def" data-concept="2" onclick="clickDef(this)">הערך שמופיע הכי הרבה פעמים</div>
+              <div class="match-def" data-concept="0" onclick="clickDef(this)">סכום הערכים חלקי כמותם</div>
+              <div class="match-def" data-concept="3" onclick="clickDef(this)">מקסימום פחות מינימום</div>
+              <div class="match-def" data-concept="1" onclick="clickDef(this)">הערך האמצעי בסדרה ממוינת</div>
+            </div>
+          </div>
+          <div class="match-status" id="match-status">לחץ על מושג, ואחר כך על ההגדרה המתאימה</div>
+          <div class="match-celebrate" id="match-celebrate">כל הכבוד! התאמת את כל המושגים נכון! 🎉</div>
+          <button class="match-reset" id="match-reset" onclick="resetMatch()">התחל מחדש</button>
+        </div>
+      </div>
+
+      <!-- GAME 3: כרטיסיות פלאש -->
+      <div class="game-section">
+        <div class="game-header">
+          <div class="game-icon">🃏</div>
+          <div><div class="game-title">כרטיסיות פלאש</div><div class="game-sub">לחץ על כרטיסייה לגלות את הצד השני</div></div>
+        </div>
+        <div class="game-body">
+          <div class="flash-hint-bar">
+            <span>לחץ על כרטיסייה כדי להפוך אותה</span>
+            &nbsp;·&nbsp;
+            <button class="flash-flip-all" onclick="flipAll()">הפוך הכול</button>
+          </div>
+          <div class="flash-grid">
+            <div class="flash-card" onclick="this.classList.toggle('flipped')">
+              <div class="flash-inner">
+                <div class="flash-front"><div style="text-align:center"><div class="ff-text">ממוצע</div><div class="ff-hint">לחץ לגלות</div></div></div>
+                <div class="flash-back"><div class="fb-text">סכום כל הערכים<br>÷ כמות הערכים</div></div>
+              </div>
+            </div>
+            <div class="flash-card" onclick="this.classList.toggle('flipped')">
+              <div class="flash-inner">
+                <div class="flash-front"><div style="text-align:center"><div class="ff-text">חציון</div><div class="ff-hint">לחץ לגלות</div></div></div>
+                <div class="flash-back"><div class="fb-text">הערך האמצעי<br>בסדרה ממוינת</div></div>
+              </div>
+            </div>
+            <div class="flash-card" onclick="this.classList.toggle('flipped')">
+              <div class="flash-inner">
+                <div class="flash-front"><div style="text-align:center"><div class="ff-text">שכיח</div><div class="ff-hint">לחץ לגלות</div></div></div>
+                <div class="flash-back"><div class="fb-text">הערך שמופיע<br>הכי הרבה פעמים</div></div>
+              </div>
+            </div>
+            <div class="flash-card" onclick="this.classList.toggle('flipped')">
+              <div class="flash-inner">
+                <div class="flash-front"><div style="text-align:center"><div class="ff-text">טווח</div><div class="ff-hint">לחץ לגלות</div></div></div>
+                <div class="flash-back"><div class="fb-text">מקסימום<br>פחות מינימום</div></div>
+              </div>
+            </div>
+            <div class="flash-card" onclick="this.classList.toggle('flipped')">
+              <div class="flash-inner">
+                <div class="flash-front"><div style="text-align:center"><div class="ff-text" style="font-size:16px;">ממוצע של<br>20, 40, 60</div><div class="ff-hint">לחץ לגלות</div></div></div>
+                <div class="flash-back"><div class="fb-text">(20+40+60)÷3<br>= 120÷3 = <strong>40</strong></div></div>
+              </div>
+            </div>
+            <div class="flash-card" onclick="this.classList.toggle('flipped')">
+              <div class="flash-inner">
+                <div class="flash-front"><div style="text-align:center"><div class="ff-text" style="font-size:16px;">חציון של<br>2, 4, 6, 8</div><div class="ff-hint">לחץ לגלות</div></div></div>
+                <div class="flash-back"><div class="fb-text">שני האמצעיים: 4,6<br>(4+6)÷2 = <strong>5</strong></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /games-layout -->
+  </div><!-- /tc-games -->
+
+
+  <!-- ═══════════════════════════════════════════
+       TAB 3 — פעילות קבוצתית
+  ══════════════════════════════════════════════ -->
+  <div class="tab-content" id="tc-group">
+    <div class="group-layout">
+
+      <div class="group-intro">
+        <h2>עבודה בקבוצות</h2>
+        <p>כל קבוצה מקבלת מושג אחד. המשימה: <strong style="color:var(--teal-light)">הסבירו אותו לשאר הכיתה</strong> כאילו אתם המורה.</p>
+        <div class="group-steps-row">
+          <div class="gs"><div class="gs-num">10</div><div class="gs-label">דקות עבודה</div></div>
+          <div class="gs"><div class="gs-num">3</div><div class="gs-label">דקות הצגה</div></div>
+          <div class="gs"><div class="gs-num">4</div><div class="gs-label">קבוצות</div></div>
+        </div>
+      </div>
+
+      <div class="group-cards">
+        <div class="group-card gc1">
+          <div class="gc-header">
+            <div class="gc-num">1</div>
+            <div><div class="gc-title">קבוצה 1</div><div class="gc-concept">מושג: ממוצע</div></div>
+          </div>
+          <div class="gc-body">
+            <div class="gc-task">
+              הסבירו מהו ממוצע במילים שלכם.<br>
+              תנו דוגמה מהחיים (לא מהחוברת).<br>
+              הדגימו חישוב בשלבים על הלוח.
+            </div>
+            <div class="gc-tags">
+              <span class="gc-tag" style="background:var(--teal-xlight);color:var(--teal-dark);">הגדרה</span>
+              <span class="gc-tag" style="background:var(--teal-xlight);color:var(--teal-dark);">דוגמה מהחיים</span>
+              <span class="gc-tag" style="background:var(--teal-xlight);color:var(--teal-dark);">חישוב</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="group-card gc2">
+          <div class="gc-header">
+            <div class="gc-num">2</div>
+            <div><div class="gc-title">קבוצה 2</div><div class="gc-concept">מושג: חציון</div></div>
+          </div>
+          <div class="gc-body">
+            <div class="gc-task">
+              הסבירו מהו חציון במילים שלכם.<br>
+              הדגימו עם 5 מספרים שאתם בוחרים.<br>
+              הסבירו מה קורה כשיש מספר זוגי של ערכים.
+            </div>
+            <div class="gc-tags">
+              <span class="gc-tag" style="background:#cffafe;color:#0e7490;">הגדרה</span>
+              <span class="gc-tag" style="background:#cffafe;color:#0e7490;">אי-זוגי</span>
+              <span class="gc-tag" style="background:#cffafe;color:#0e7490;">זוגי</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="group-card gc3">
+          <div class="gc-header">
+            <div class="gc-num">3</div>
+            <div><div class="gc-title">קבוצה 3</div><div class="gc-concept">מושג: שכיח</div></div>
+          </div>
+          <div class="gc-body">
+            <div class="gc-task">
+              הסבירו מהו שכיח במילים שלכם.<br>
+              תנו דוגמה עם מספרים שחוזרים.<br>
+              הראו מה קורה כשיש שני שכיחים.
+            </div>
+            <div class="gc-tags">
+              <span class="gc-tag" style="background:var(--green-light);color:#065f46;">הגדרה</span>
+              <span class="gc-tag" style="background:var(--green-light);color:#065f46;">שכיח בודד</span>
+              <span class="gc-tag" style="background:var(--green-light);color:#065f46;">שני שכיחים</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="group-card gc4">
+          <div class="gc-header">
+            <div class="gc-num">4</div>
+            <div><div class="gc-title">קבוצה 4</div><div class="gc-concept">מושג: טווח</div></div>
+          </div>
+          <div class="gc-body">
+            <div class="gc-task">
+              הסבירו מהו טווח במילים שלכם.<br>
+              הדגימו עם ציוני כיתה דמיוניים.<br>
+              הסבירו: מה טווח גדול אומר על קבוצה?
+            </div>
+            <div class="gc-tags">
+              <span class="gc-tag" style="background:#fef9c3;color:#713f12;">הגדרה</span>
+              <span class="gc-tag" style="background:#fef9c3;color:#713f12;">דוגמה</span>
+              <span class="gc-tag" style="background:#fef9c3;color:#713f12;">פירוש</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="group-timer">
+        <div><div class="gt-label">טיימר לפעילות</div><div class="gt-time" id="timer-display">10:00</div></div>
+        <button class="gt-btn" id="timer-btn" onclick="toggleTimer()">התחל</button>
+      </div>
+
+    </div><!-- /group-layout -->
+  </div><!-- /tc-group -->
+
+
+  <!-- ═══════════════════════════════════════════
+       TAB 4 — פעילות סיכום
+  ══════════════════════════════════════════════ -->
+  <div class="tab-content" id="tc-summary">
+    <div class="summary-layout">
+
+      <!-- EXIT TICKET -->
+      <div class="sum-activity-card">
+        <div class="sac-header">
+          <div class="sac-icon">🎫</div>
+          <div><div class="sac-title">כרטיס יציאה</div><div class="sac-sub">חשב/י ואחר כך גלה/י את התשובות</div></div>
+        </div>
+        <div class="sac-body">
+          <p style="font-size:15px;color:var(--text-muted);margin-bottom:4px;">הציונים הבאים הם ציוני כיתה ח׳ במתמטיקה:</p>
+          <div class="et-numbers">
+            <div class="et-num">65</div><div class="et-num">70</div><div class="et-num">70</div>
+            <div class="et-num">80</div><div class="et-num">90</div><div class="et-num">95</div>
+          </div>
+          <div class="et-tasks">
+            <div class="et-task"><div class="et-task-label">מטלה א׳</div><div class="et-task-q">חשב/י את הממוצע</div></div>
+            <div class="et-task"><div class="et-task-label">מטלה ב׳</div><div class="et-task-q">מצא/י את החציון</div></div>
+            <div class="et-task"><div class="et-task-label">מטלה ג׳</div><div class="et-task-q">מהו השכיח?</div></div>
+            <div class="et-task"><div class="et-task-label">מטלה ד׳</div><div class="et-task-q">חשב/י את הטווח</div></div>
+          </div>
+          <button class="et-reveal-btn" onclick="revealEt()">גלה תשובות</button>
+          <div class="et-answers" id="et-ans">
+            <div class="et-ans-grid">
+              <div class="et-ans ea-mean"><div class="ea-label">ממוצע</div><div class="ea-val">78.3</div></div>
+              <div class="et-ans ea-median"><div class="ea-label">חציון</div><div class="ea-val">75</div></div>
+              <div class="et-ans ea-mode"><div class="ea-label">שכיח</div><div class="ea-val">70</div></div>
+              <div class="et-ans ea-range"><div class="ea-label">טווח</div><div class="ea-val">30</div></div>
+            </div>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:10px;text-align:center;">ממוצע = 470÷6 ≈ 78.3 &nbsp;|&nbsp; חציון = (70+80)÷2 = 75 &nbsp;|&nbsp; שכיח = 70 &nbsp;|&nbsp; טווח = 95−65 = 30</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-2-1 REFLECTION -->
+      <div class="sum-activity-card">
+        <div class="sac-header">
+          <div class="sac-icon">✍️</div>
+          <div><div class="sac-title">רפלקציה 3-2-1</div><div class="sac-sub">הרהר/י בחוויית הלמידה שלך</div></div>
+        </div>
+        <div class="sac-body">
+          <div class="reflect-grid">
+            <div class="reflect-row">
+              <div class="reflect-num" style="color:var(--teal-light)">3</div>
+              <div style="flex:1">
+                <div class="reflect-prompt">דברים שלמדתי היום</div>
+                <textarea class="reflect-input" rows="2" placeholder="כתוב/י כאן..."></textarea>
+              </div>
+            </div>
+            <div class="reflect-row">
+              <div class="reflect-num" style="color:var(--cyan)">2</div>
+              <div style="flex:1">
+                <div class="reflect-prompt">דברים שעדיין לא ברורים לי</div>
+                <textarea class="reflect-input" rows="2" placeholder="כתוב/י כאן..."></textarea>
+              </div>
+            </div>
+            <div class="reflect-row">
+              <div class="reflect-num" style="color:var(--green)">1</div>
+              <div style="flex:1">
+                <div class="reflect-prompt">שאלה שאני רוצה לשאול</div>
+                <textarea class="reflect-input" rows="2" placeholder="כתוב/י כאן..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONCEPT CHECK -->
+      <div class="sum-activity-card">
+        <div class="sac-header">
+          <div class="sac-icon">✅</div>
+          <div><div class="sac-title">בדיקת הבנה עצמית</div><div class="sac-sub">סמן/י מה ברור לך — לחץ לסמן</div></div>
+        </div>
+        <div class="sac-body">
+          <div class="concept-checks">
+            <div class="cc-item" onclick="toggleCheck(this)"><div class="cc-cb"></div><div class="cc-text">אני יודע/ת לחשב ממוצע של קבוצת מספרים</div></div>
+            <div class="cc-item" onclick="toggleCheck(this)"><div class="cc-cb"></div><div class="cc-text">אני יודע/ת למצוא חציון — גם עם מספר אי-זוגי וגם זוגי</div></div>
+            <div class="cc-item" onclick="toggleCheck(this)"><div class="cc-cb"></div><div class="cc-text">אני מבין/ה מהו שכיח ואיך מוצאים אותו</div></div>
+            <div class="cc-item" onclick="toggleCheck(this)"><div class="cc-cb"></div><div class="cc-text">אני יודע/ת לחשב טווח של סדרה</div></div>
+            <div class="cc-item" onclick="toggleCheck(this)"><div class="cc-cb"></div><div class="cc-text">אני מבין/ה מתי כדאי להשתמש בחציון במקום ממוצע</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /summary-layout -->
+  </div><!-- /tc-summary -->
+
+</div><!-- /main -->
+
+<script>
+  /* ════════════════════════════════════
+     TAB SWITCHING
+  ════════════════════════════════════ */
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tc-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  /* ════════════════════════════════════
+     SLIDE NAVIGATION
+  ════════════════════════════════════ */
+  const slides = Array.from(document.querySelectorAll('#tc-slides .slide'));
+  const TOTAL = slides.length;
+  let cur = 0;
+
+  function goSlide(dir) {
+    const next = cur + dir;
+    if (next < 0 || next >= TOTAL) return;
+    slides[cur].classList.remove('active');
+    cur = next;
+    slides[cur].classList.add('active');
+    updateSlideUI();
+  }
+
+  function updateSlideUI() {
+    document.getElementById('scounter').textContent = (cur + 1) + ' / ' + TOTAL;
+    document.getElementById('sprogress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+    document.getElementById('sprev').disabled = cur === 0;
+    document.getElementById('snext').disabled = cur === TOTAL - 1;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('tc-slides').classList.contains('active')) return;
+    if (e.key === 'ArrowRight') goSlide(-1);
+    if (e.key === 'ArrowLeft')  goSlide(1);
+  });
+
+  updateSlideUI();
+
+  /* ════════════════════════════════════
+     SLIDE QUIZ (checkAns / revealAns)
+  ════════════════════════════════════ */
+  function checkAns(btn, correct, fbId) {
+    const card = btn.closest('.q-card');
+    card.querySelectorAll('.opt-btn').forEach(b => { b.onclick = null; b.style.pointerEvents = 'none'; });
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    const fb = document.getElementById(fbId);
+    fb.classList.add('show', correct ? 'ok' : 'err');
+    fb.textContent = correct ? '✓ נכון מאוד! כל הכבוד' : '✗ לא בדיוק — נסו שוב בחידון המשחקים';
+  }
+
+  function revealAns(id, btn) {
+    document.getElementById(id).classList.add('show');
+    btn.disabled = true;
+  }
+
+  /* ════════════════════════════════════
+     QUIZ GAME
+  ════════════════════════════════════ */
+  const quizData = [
+    { q: 'מה הממוצע של: 40, 60, 80?', opts: ['60', '180', '70', '55'], ans: 0 },
+    { q: 'מה החציון של: 1, 3, 5, 7, 9?', opts: ['3', '5', '7', '4'], ans: 1 },
+    { q: 'מה השכיח של: 4, 7, 4, 9, 4, 7?', opts: ['7', '9', '4', 'אין שכיח'], ans: 2 },
+    { q: 'מה הטווח של: 20, 35, 50, 65?', opts: ['35', '40', '45', '30'], ans: 2 },
+    { q: 'ציוני תלמיד: 70, 90, 80. מה הממוצע?', opts: ['240', '85', '80', '75'], ans: 2 }
+  ];
+  const LETTERS = ['א', 'ב', 'ג', 'ד'];
+  let qCur = 0, qScore = 0, qAnswered = false;
+
+  function renderQuiz() {
+    const data = quizData[qCur];
+    document.getElementById('quiz-q').textContent = data.q;
+    document.getElementById('qscore').textContent = 'ניקוד: ' + qScore + ' / 5';
+    document.getElementById('qprog').style.width = (qCur / quizData.length * 100) + '%';
+    document.getElementById('quiz-next').classList.remove('show');
+    qAnswered = false;
+
+    const optsEl = document.getElementById('quiz-opts');
+    optsEl.innerHTML = '';
+    data.opts.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.innerHTML = '<span class="quiz-ol">' + LETTERS[i] + '</span>' + opt;
+      btn.onclick = () => answerQuiz(i, btn);
+      optsEl.appendChild(btn);
+    });
+  }
+
+  function answerQuiz(chosen, btn) {
+    if (qAnswered) return;
+    qAnswered = true;
+    const correct = quizData[qCur].ans;
+    const allBtns = document.querySelectorAll('#quiz-opts .quiz-opt');
+    allBtns.forEach(b => { b.onclick = null; b.style.pointerEvents = 'none'; });
+
+    if (chosen === correct) {
+      btn.classList.add('correct');
+      qScore++;
+    } else {
+      btn.classList.add('wrong');
+      allBtns[correct].classList.add('show-ans');
+    }
+    document.getElementById('qscore').textContent = 'ניקוד: ' + qScore + ' / 5';
+    document.getElementById('quiz-next').classList.add('show');
+    if (qCur === quizData.length - 1) {
+      document.getElementById('quiz-next').textContent = 'סיים ›';
+    }
+  }
+
+  function nextQuizQ() {
+    qCur++;
+    if (qCur >= quizData.length) {
+      document.getElementById('quiz-area').style.display = 'none';
+      const done = document.getElementById('quiz-done-area');
+      done.classList.add('show');
+      document.getElementById('qd-score-val').textContent = qScore + ' / 5';
+      const labels = ['נסה שוב — אתה יכול יותר!', 'התחלה טובה!', 'יפה מאוד!', 'כמעט מושלם!', 'כל הכבוד!', 'מושלם! 🎉'];
+      document.getElementById('qd-label').textContent = labels[Math.min(qScore, 5)];
+    } else {
+      renderQuiz();
+    }
+  }
+
+  function resetQuiz() {
+    qCur = 0; qScore = 0;
+    document.getElementById('quiz-area').style.display = 'block';
+    document.getElementById('quiz-done-area').classList.remove('show');
+    renderQuiz();
+  }
+
+  renderQuiz();
+
+  /* ════════════════════════════════════
+     MATCHING GAME
+  ════════════════════════════════════ */
+  let selConcept = null;
+  const matchedConcepts = new Set();
+  const matchedDefs     = new Set();
+
+  function clickConcept(el) {
+    if (el.classList.contains('locked')) return;
+    document.querySelectorAll('.match-con').forEach(c => c.classList.remove('selected'));
+    if (selConcept === parseInt(el.dataset.idx)) { selConcept = null; return; }
+    selConcept = parseInt(el.dataset.idx);
+    el.classList.add('selected');
+    document.getElementById('match-status').textContent = 'עכשיו בחר/י את ההגדרה המתאימה';
+  }
+
+  function clickDef(el) {
+    if (el.classList.contains('locked') || selConcept === null) return;
+    const defConcept = parseInt(el.dataset.concept);
+
+    if (defConcept === selConcept) {
+      // correct match
+      el.classList.add('locked');
+      document.querySelector('.match-con[data-idx="' + selConcept + '"]').classList.remove('selected');
+      document.querySelector('.match-con[data-idx="' + selConcept + '"]').classList.add('locked');
+      matchedConcepts.add(selConcept);
+      matchedDefs.add(defConcept);
+      selConcept = null;
+      document.getElementById('match-status').textContent = '✓ נכון! המשך/י';
+
+      if (matchedConcepts.size === 4) {
+        document.getElementById('match-status').textContent = '';
+        document.getElementById('match-celebrate').classList.add('show');
+        document.getElementById('match-reset').classList.add('show');
+      }
+    } else {
+      // wrong
+      el.classList.add('wrong-flash');
+      document.querySelector('.match-con[data-idx="' + selConcept + '"]').classList.add('wrong-flash');
+      setTimeout(() => {
+        el.classList.remove('wrong-flash');
+        document.querySelector('.match-con.selected')?.classList.remove('wrong-flash','selected');
+      }, 450);
+      selConcept = null;
+      document.getElementById('match-status').textContent = '✗ לא מתאים — נסה/י שוב';
+    }
+  }
+
+  function resetMatch() {
+    selConcept = null;
+    matchedConcepts.clear(); matchedDefs.clear();
+    document.querySelectorAll('.match-con,.match-def').forEach(el => el.classList.remove('locked','selected','wrong-flash'));
+    document.getElementById('match-status').textContent = 'לחץ על מושג, ואחר כך על ההגדרה המתאימה';
+    document.getElementById('match-celebrate').classList.remove('show');
+    document.getElementById('match-reset').classList.remove('show');
+  }
+
+  /* ════════════════════════════════════
+     FLASH CARDS
+  ════════════════════════════════════ */
+  let allFlipped = false;
+  function flipAll() {
+    allFlipped = !allFlipped;
+    document.querySelectorAll('.flash-card').forEach(c => {
+      allFlipped ? c.classList.add('flipped') : c.classList.remove('flipped');
+    });
+    document.querySelector('.flash-flip-all').textContent = allFlipped ? 'הפוך חזרה' : 'הפוך הכול';
+  }
+
+  /* ════════════════════════════════════
+     TIMER (GROUP ACTIVITY)
+  ════════════════════════════════════ */
+  let timerSecs = 600, timerInterval = null, timerRunning = false;
+  function pad(n) { return n < 10 ? '0' + n : n; }
+  function updateTimerDisplay() {
+    const m = Math.floor(timerSecs / 60), s = timerSecs % 60;
+    document.getElementById('timer-display').textContent = pad(m) + ':' + pad(s);
+  }
+  function toggleTimer() {
+    const btn = document.getElementById('timer-btn');
+    if (!timerRunning) {
+      timerRunning = true; btn.textContent = 'עצור';
+      timerInterval = setInterval(() => {
+        if (timerSecs > 0) { timerSecs--; updateTimerDisplay(); }
+        else { clearInterval(timerInterval); timerRunning = false; btn.textContent = 'אפס'; document.getElementById('timer-display').textContent = 'הזמן נגמר!'; }
+      }, 1000);
+    } else {
+      clearInterval(timerInterval); timerRunning = false; btn.textContent = 'המשך';
+    }
+    if (timerSecs === 0 && !timerRunning) {
+      timerSecs = 600; updateTimerDisplay(); btn.textContent = 'התחל';
+    }
+  }
+
+  /* ════════════════════════════════════
+     SUMMARY – EXIT TICKET & CHECKS
+  ════════════════════════════════════ */
+  function revealEt() {
+    document.getElementById('et-ans').classList.add('show');
+    event.target.style.display = 'none';
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+    el.querySelector('.cc-cb').textContent = el.classList.contains('checked') ? '✓' : '';
+  }
+</script>
+
+</body>
+</html>
